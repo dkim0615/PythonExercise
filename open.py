@@ -2,11 +2,10 @@
 
 # open fix44.xml 
 # read line by line
-# if the line includes field number=x, name=y 
-# add the number and name to Dict 1 and move on to the next line
-# if the line includes value enum=z, description=a
-# add the enum and description to Dict 2
-# Dict 2 is the value to the key, Dict 1
+# if the line includes field number=x, name=y, and the next line is not value enum=z 
+# add the num and name to Dict 1 and move on to the next line
+# if the line includes field number=x, name=y, and the next line is value enum=z
+# add the num and name and enum to Dict 2
 
 EMPTY_DICT = {}
 FINAL_DICT = {}
@@ -19,6 +18,7 @@ current_enum_tag = ""
 for line in txt:
     # print(line[:-1])
     value_dict = {}
+    any_dict = {}
 
     if str("field number=") in line:
         tag_num = line[line.find("number="):line.find(" name")]
@@ -40,10 +40,10 @@ for line in txt:
         des_val = enum_val.replace("description=","")
 
         value_dict[current_enum_tag] = des_val
-        value_dict[current_enum_tag].append(des_val) ##AttributeError...why?
-        print(value_dict)
+        any_dict = any_dict.append(value_dict)
+        print(any_dict) ##AttributeError: 'dict' object has no attribute 'append' really?!
     
-    FINAL_DICT[current_tag] = value_dict
+    FINAL_DICT[current_tag] = any_dict
     print(FINAL_DICT)
 
 myfile.close()
