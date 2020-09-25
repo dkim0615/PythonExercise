@@ -1,4 +1,5 @@
 #!/opt/bb/bin/python3.6
+import re
 
 def fix_spec():
     fix_description = {}
