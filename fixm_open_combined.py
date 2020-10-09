@@ -5,38 +5,36 @@ def fix_spec():
     fix_description = {}
     fix_dictionary = {}
 
-    myfile = open("quickfix.txt")
-    txt = myfile.readlines()
+    # myfile = open("quickfix.txt")
+    # txt = myfile.readlines()
     current_tag = ""
     current_enum_tag = ""
 
-    for line in txt:
-        if str("field number=") in line:
-            tag_num = line[line.find("number="):line.find(" name")]
-            int_val_b= tag_num.replace("number=","")
-            int_val = int_val_b.strip("\"")
-            current_tag = int_val
-        
-            tag_val = line[line.find("name="):line.find(" type")]
-            str_val_b = tag_val.replace("name=","")
-            str_val = str_val_b.strip("\"")
-            
-            fix_dictionary[current_tag] = str_val
+    with open("quickfix.txt") as fd:
+        for line in fd:
+            if str("field number=") in line:
+                result = re.findall('field number="(.+)" name="(.+)" ', line)
+                if len(result) !=0:
+                    tag_num = result[0][0]
+                    # print(tag_num)
+                    current_tag = tag_num
+                    tag_val = result[0][1]
+                    # print(tag_val)
+                    fix_dictionary[tag_num] = tag_val
+                    # print(fix_description, "this is fix description")
 
-        elif str("value enum") in line: 
-            enum_num = line[line.find("enum="):line.find(" description")]
-            int_num_b = enum_num.replace("enum=","")
-            int_num = int_num_b.strip("\"")
-            current_enum_tag = int_num
-
-            enum_val = line[line.find("description="):line.find("/>")]
-            des_val_b = enum_val.replace("description=","")
-            des_val = des_val_b.strip("\"")
-            
-            if current_tag not in fix_description:
-                fix_description[current_tag] = {}
-            fix_description[current_tag][current_enum_tag] = des_val
-
+            if str("value enum=") in line:
+                result_2 = re.findall('value enum="(.+)" description="(.+)"', line)
+                if len(result_2) !=0:
+                    val_enum = result_2[0][0]
+                    # print(val_enum)
+                    current_enum_tag = val_enum
+                    des_val = result_2[0][1]
+                    # print(des_val)
+                    if current_tag not in fix_description:
+                        fix_description[current_tag] = {}
+                    fix_description[current_tag][current_enum_tag] = des_val
+    
     return fix_dictionary, fix_description
 
 def make_list(fixm):
